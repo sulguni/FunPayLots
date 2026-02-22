@@ -115,7 +115,7 @@ def fill_category(subcategory_id: int):
         calc = acc.calc(types.SubCategoryTypes.COMMON, subcategory_id)
         for i, t in enumerate(times):
             lot = types.LotFields(0, {}, acc.get_subcategory(types.SubCategoryTypes.COMMON, subcategory_id))
-            lot.active = False
+            lot.active = True
             lot.amount = 111
             lot.currency = types.Currency.RUB
             lot.description_en = lot_desc_en
