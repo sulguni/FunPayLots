@@ -15,7 +15,7 @@ games[1884] = ("Party Animals", {"fields[platform]": "PC", "fields[type]": "Stan
 games[383] = ("Forza Horizon 5", {"server_id": "5593", "fields[type]": "Аренда"}, [2.00, 4.00, 6.00, 7.00, 8.00, 9.00, 12.00, 18.00, 25.00, 30.00, 40.00, 50.00])
 games[3879] = ("MIMESIS", {}, [1.17, 1.50, 1.70, 2.00, 2.30, 2.60, 4.00, 6.00, 10.00, 13.00, 14.00, 16.00])
 games[2988] = ("Grounded", {"server_id": "11872", "fields[platform]": "PC"}, [1.10, 2.00, 3.00, 4.00, 5.00, 6.00, 10.00, 13.00, 17.00, 20.00, 23.00, 30.00])
-#games[1450] = [("Outlast", {"server_id": "8897", "fields[platform]": "(PC) Steam", "fields[type]": "Аренда"}, [1.10, 3.00, 5.00, 6.00, 7.00, 8.00, 9.00, 12.00, 14.00, 16.00, 20.00, 21.00]), ("The Outlast Trials", {"server_id": "8899", "fields[platform]": "(PC) Steam", "fields[type]": "Аренда"}, [1.10, 2.00, 3.00, 4.00, 5.00, 6.00, 7.00, 10.00, 13.00, 14.00, 20.00, 28.00])]
+games[1450] = [("Outlast", {"server_id": "8897", "fields[platform]": "(PC) Steam", "fields[type]": "Аренда"}, [1.10, 3.00, 5.00, 6.00, 7.00, 8.00, 9.00, 12.00]), ("The Outlast Trials", {"server_id": "8899", "fields[platform]": "(PC) Steam", "fields[type]": "Аренда"}, [1.10, 2.00, 3.00, 4.00, 5.00, 6.00, 7.00, 10.00, 13.00, 14.00, 20.00, 28.00])]
 games[3204] = ("Assassin's Creed Shadows", {"fields[platform]": "PC"}, [3.00, 4.00, 5.00, 6.00, 7.00, 7.50, 10.00, 18.00, 34.00, 52.00, 67.00, 90.00])
 games[3222] = ("Escape the Backrooms", {"server_id": "11212", "fields[platform]": "PC"}, [2.00, 3.00, 4.00, 5.00, 6.00, 7.00, 9.00, 10.00, 18.00, 26.00, 28.00, 30.00])
 games[2888] = ("7 Days to Die", {"fields[platform]": "PC", "fields[type]": "Standard Edition"}, [1.10, 4.00, 5.00, 7.00, 8.00, 9.00, 10.00, 11.00, 12.00, 13.00, 14.00, 15.00])
@@ -107,13 +107,10 @@ def fill_category(subcategory_id: int):
             prices = None
         elif len(game) == 3:
             name, fields, prices = game
-            if len(prices) != len(times):
-                print("not enough prices for game", name)
-                return
         else:
             return
         calc = acc.calc(types.SubCategoryTypes.COMMON, subcategory_id)
-        for i, t in enumerate(times):
+        for t, price in zip(times, prices if prices else [1500] * len(times)):
             lot = types.LotFields(0, {}, acc.get_subcategory(types.SubCategoryTypes.COMMON, subcategory_id))
             lot.active = True
             lot.amount = 111
@@ -122,9 +119,9 @@ def fill_category(subcategory_id: int):
             lot.description_ru = lot_desc_ru
             lot.title_en = lot_name_en.replace('%t', t.split(':')[1]).replace('%n', name)
             lot.title_ru = lot_name_ru.replace('%t', t.split(':')[0]).replace('%n', name)
-            lot.price = (prices[i] if prices else 1500) / calc.commission_coefficient
+            lot.price = price / calc.commission_coefficient
             lot.fields.update(fields)
-            print("Создаём", lot.title_ru, "за", prices[i] if prices else 1500)
+            print("Создаём", lot.title_ru, "за", price)
             acc.save_lot(lot)
 
 for id in games:
